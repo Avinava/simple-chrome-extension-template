@@ -1,0 +1,156 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  height: 100vh;
+  color: white;
+  overflow: hidden;
+}
+
+.sidepanel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidepanel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.sidepanel-header h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sidepanel-nav {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-btn.active {
+  color: white;
+  border-bottom-color: #ff6b6b;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidepanel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.section-content h3 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.favicon {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-url {
+  font-size: 11px;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-time {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+/* Scrollbar styling */
+.sidepanel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidepanel-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidepanel-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidepanel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
