@@ -33,10 +33,17 @@ function createFloatingButton() {
   })
   
   button.addEventListener('click', () => {
+    console.log('Floating button clicked, sending message to background')
     // Send message to background script
     chrome.runtime.sendMessage({
       action: 'notification',
       text: `Extension button clicked on ${window.location.hostname}!`
+    }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Message sending error:', chrome.runtime.lastError)
+      } else {
+        console.log('Message sent successfully, response:', response)
+      }
     })
     
     // Add some visual feedback

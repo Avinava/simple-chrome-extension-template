@@ -48,12 +48,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true // Keep message channel open for async response
       
     case 'notification':
-      chrome.notifications.create({
+      console.log('Creating notification with message:', message.text)
+      const notificationOptions = {
         type: 'basic',
-        iconUrl: '/icons/icon48.png',
+        iconUrl: chrome.runtime.getURL('icons/icon48.png'),
         title: 'Simple Extension',
         message: message.text || 'Notification from extension'
+      }
+      console.log('Notification options:', notificationOptions)
+      
+      chrome.notifications.create('', notificationOptions, (notificationId) => {
+        if (chrome.runtime.lastError) {
+          console.error('Notification error:', chrome.runtime.lastError)
+          sendResponse({ success: false, error: chrome.runtime.lastError })
+        } else {
+          console.log('Notification created with ID:', notificationId)
+          sendResponse({ success: true, notificationId: notificationId })
+        }
       })
+      return true // Keep message channel open for async response
       break
       
     case 'openSidePanel':

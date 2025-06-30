@@ -9,7 +9,8 @@
     "scripting",
     "contextMenus",
     "alarms",
-    "sidePanel"
+    "sidePanel",
+    "notifications"
   ],
   "host_permissions": [
     "http://*/*",
