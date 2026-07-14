@@ -1,220 +1,103 @@
 # Simple Chrome Extension Template
 
-A modern, lightweight Chrome extension template built with **Preact**, **HTM**, and **Vite**. This boilerplate provides a complete foundation for building Chrome extensions with a modern development experience.
+An **opinionated** Manifest V3 Chrome extension template. It pairs a lightweight
+UI stack (Preact + HTM) with a small, typed architecture — a reusable service
+layer, a message router, shared state, and a theming system — so your extension
+starts with structure instead of a blank `switch` statement.
 
-## 🚀 Features
+## ✨ What's in the box
 
-- **Modern Stack**: Built with Preact (3KB React alternative) and HTM (JSX alternative)
-- **Fast Development**: Powered by Vite for lightning-fast builds and HMR
-- **Complete Extension Structure**: Includes popup, options page, side panel, background script, and content script
-- **Storage Integration**: Examples of using Chrome storage API
-- **Beautiful UI**: Modern gradient design with smooth animations
-- **Cross-browser Compatible**: Manifest V3 compliant
-- **TypeScript Ready**: Easy to convert to TypeScript if needed
+- **Preact + HTM** — a ~4KB React-like UI with no JSX build step
+- **TypeScript** — strict-ish config, transpiled natively by Vite (no extra loader)
+- **Vite + `@crxjs/vite-plugin`** — fast builds and HMR; the manifest drives the build
+- **Zustand** — vanilla stores that work in any surface, bridged to Preact with a tiny `useStore` hook
+- **Typed messaging** — a `MessageBus` + background router replace ad-hoc `chrome.runtime.onMessage` handlers
+- **Chrome API wrappers** — promisified, null-safe helpers (`StorageService`, `TabUtils`, …)
+- **Theming** — a design-token CSS system with light / dark / system, synced across every surface
+- **Lucide icons** — tree-shaken SVG icons rendered straight into HTM
+- **Tooling** — Prettier, Vitest (+ happy-dom), path aliases, and typecheck wired up
 
-## 📁 Project Structure
+## 📁 Project structure
 
 ```
 src/
-├── manifest.json          # Extension manifest
-├── popup/                 # Extension popup
-│   ├── popup.html
-│   ├── popup.js
-│   └── popup.css
-├── options/               # Options page
-│   ├── options.html
-│   ├── options.js
-│   └── options.css
-├── sidepanel/             # Side panel (Chrome 114+)
-│   ├── sidepanel.html
-│   ├── sidepanel.js
-│   └── sidepanel.css
-├── background/            # Background service worker
-│   └── background.js
-├── content/               # Content script
-│   └── content.js
-└── utils/                 # Shared utilities
-    └── preact-htm.js
-icons/                     # Extension icons
-├── icon16.png
-├── icon32.png
-├── icon48.png
-└── icon128.png
+  core/              # Generic, product-agnostic infrastructure (depends only on Chrome APIs)
+    services/        # MessageBus, StorageService, ChromeApiWrapper
+    types/           # Message contract (ExtensionMessage union, MessageHandler)
+    utils/           # generateId, ...
+  background/         # Service worker
+    index.ts         # initialize() — wires services, handlers, lifecycle
+    handlers/        # MessageHandlers (router), CommandHandlers (shortcuts)
+    services/        # ThemeService (relays theme across surfaces)
+  content/            # Content script
+  popup/              # Toolbar popup   (popup.tsx + popupStore.ts)
+  options/            # Options page
+  sidepanel/          # Side panel (Chrome 114+)
+  shared/             # Cross-surface UI: theme.css, themeStore.ts, ThemeToggle.tsx
+  utils/              # useStore (zustand→Preact), icons (lucide), preact-htm
+icons/                # Extension icons (16/32/48/128)
 ```
 
-## 🛠️ Quick Start
-
-### 1. Clone and Install
+## 🚀 Quick start
 
 ```bash
-git clone <this-repo>
-cd simple-chrome-extension-template
 npm install
+npm run dev          # Vite dev server with HMR
 ```
 
-### 2. Add Icons
+Then load the extension:
 
-Create or add your extension icons in the `icons/` directory:
-- `icon16.png` (16x16)
-- `icon32.png` (32x32) 
-- `icon48.png` (48x48)
-- `icon128.png` (128x128)
+1. Open `chrome://extensions/`
+2. Enable **Developer mode**
+3. **Load unpacked** → select the `dist/` folder (`npm run build` first for a production build)
 
-### 3. Development
+## 🛠️ Scripts
 
-```bash
-# Start development server with hot reload
-npm run dev
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Production build to `dist/` (console/debugger stripped) |
+| `npm run build:watch` | Rebuild on change |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Run Vitest once |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run test:coverage` | Vitest with coverage |
+| `npm run format` | Prettier write |
+| `npm run format:check` | Prettier check |
+| `npm run zip` | Build and package `extension.zip` |
 
-# Build for production
-npm run build
+## 🧭 How it fits together
 
-# Build and watch for changes
-npm run build:watch
-```
+- **A surface never calls `chrome.*` directly.** It reads state from a Zustand
+  store and calls actions; the store uses `StorageService` / `MessageBus`.
+- **The background is a router.** `createMessageRouter` dispatches each message
+  by its `action` to a small async handler — add a feature by adding a case, not
+  by growing a `switch`.
+- **Theme is shared.** Any surface calls `themeStore.setTheme()`; the background
+  relays the change to every other open surface so they update together.
 
-### 4. Load in Chrome
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full picture and the conventions
+to follow when extending it.
 
-1. Open Chrome and go to `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked" and select the `dist` folder
+## 🎯 What the demo does
 
-## 📚 What's Included
+The starter ships a working example of every layer: a popup counter persisted via
+`StorageService`, an options settings form, a side panel listing tabs / history /
+bookmarks, a content-script floating button that asks the background to show a
+notification, a right-click context-menu that shows an in-page banner, a keyboard
+command (`Ctrl/Cmd+Shift+Y`), and a theme toggle that syncs across all of them.
+Strip out what you don't need — the infrastructure underneath is the point.
 
-### Popup (`src/popup/`)
-- Counter example with Chrome storage
-- Current tab information display
-- Buttons to open options and side panel
-- Modern UI with smooth animations
+## 🔧 Customizing
 
-### Options Page (`src/options/`)
-- Settings management with Chrome storage
-- Theme selection, notifications toggle
-- Custom text input with auto-save
-- Responsive design for different screen sizes
-
-### Side Panel (`src/sidepanel/`)
-- Tab management interface
-- Browsing history display
-- Bookmarks quick access
-- Tabbed navigation between sections
-
-### Background Script (`src/background/`)
-- Service worker setup
-- Context menu integration
-- Message passing between components
-- Storage change listeners
-- Periodic task scheduling with alarms
-
-### Content Script (`src/content/`)
-- Floating action button on web pages
-- Message handling from background script
-- DOM manipulation examples
-- CSS injection with animations
-
-## 🔧 Customization
-
-### Updating Extension Details
-
-Edit `src/manifest.json`:
-```json
-{
-  "name": "Your Extension Name",
-  "description": "Your extension description",
-  "version": "1.0.0"
-}
-```
-
-### Modifying Permissions
-
-Add or remove permissions in `src/manifest.json`:
-```json
-{
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
-    "notifications"
-  ]
-}
-```
-
-### Styling
-
-Each component has its own CSS file with a modern gradient theme. Colors use CSS custom properties for easy theming:
-
-```css
-:root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent-gradient: linear-gradient(135deg, #ff6b6b, #ee5a24);
-}
-```
-
-### Adding New Components
-
-1. Create a new directory in `src/`
-2. Add HTML, JS, and CSS files
-3. Update `vite.config.js` to include the new entry point
-4. Update `manifest.json` if needed
-
-## 🎯 Examples Included
-
-- **Storage API**: Saving and retrieving user preferences
-- **Tabs API**: Managing browser tabs and getting tab information
-- **History API**: Accessing browsing history
-- **Bookmarks API**: Reading user bookmarks
-- **Notifications API**: Showing system notifications
-- **Context Menus**: Right-click menu integration
-- **Message Passing**: Communication between extension components
-- **Content Script Injection**: Modifying web pages
-
-## 🚢 Building for Production
-
-```bash
-npm run build
-```
-
-This creates a `dist/` folder with your extension ready for:
-- Chrome Web Store upload
-- Manual installation
-- Distribution to users
-
-## 📖 Chrome Extension APIs Used
-
-- `chrome.storage` - Data persistence
-- `chrome.tabs` - Tab management
-- `chrome.history` - Browse history
-- `chrome.bookmarks` - Bookmark access
-- `chrome.notifications` - System notifications
-- `chrome.contextMenus` - Right-click menus
-- `chrome.runtime` - Extension lifecycle
-- `chrome.sidePanel` - Side panel API (Chrome 114+)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- **Identity:** edit `name` / `description` in `package.json`; the build injects
+  the `version` into the manifest automatically. Edit the rest in `src/manifest.json`.
+- **Icons:** replace the PNGs in `icons/`.
+- **Design:** change the tokens at the top of `src/shared/theme.css` — every
+  surface follows them.
+- **Messages:** add a message to `src/core/types/messages.ts` and a case to the
+  background router.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🎉 Getting Started Tips
-
-1. **Start Small**: Begin by modifying the popup to understand the structure
-2. **Use the Examples**: Each component includes practical examples you can build upon
-3. **Check the Console**: Both extension and webpage consoles show helpful debug information
-4. **Read the Comments**: Code includes helpful comments explaining Chrome API usage
-5. **Test Thoroughly**: Test your extension on different websites and scenarios
-
-## 🔗 Useful Resources
-
-- [Chrome Extension Documentation](https://developer.chrome.com/docs/extensions/)
-- [Preact Documentation](https://preactjs.com/)
-- [HTM Documentation](https://github.com/developit/htm)
-- [Vite Documentation](https://vitejs.dev/)
-
-Happy coding! 🎉
+MIT — see [LICENSE](LICENSE).
