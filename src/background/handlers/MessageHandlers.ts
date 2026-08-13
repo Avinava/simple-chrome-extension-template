@@ -34,9 +34,15 @@ async function handleMessage(
       return { handled: true, response: { success: !!tab, data: tab ?? undefined } }
     }
 
-    case 'notify':
-      await NotificationUtils.show(message.title ?? 'Notification', message.message)
-      return { handled: true, response: { success: true } }
+    case 'notify': {
+      const notificationId = await NotificationUtils.show(
+        message.title ?? 'Notification',
+        message.message
+      )
+      return notificationId
+        ? { handled: true, response: { success: true, data: notificationId } }
+        : { handled: true, response: { success: false, error: 'Notification could not be shown' } }
+    }
 
     default:
       return { handled: false }

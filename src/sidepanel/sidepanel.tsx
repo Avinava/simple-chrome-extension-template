@@ -1,10 +1,9 @@
 import { html, render } from '@utils/preact-htm'
-import { useState, useEffect } from 'preact/hooks'
-import { TabUtils } from '@core/services'
+import { useEffect } from 'preact/hooks'
 import { ThemeToggle } from '@shared/ThemeToggle'
 import { initializeTheme } from '@shared/themeStore'
-
-type Section = 'tabs' | 'history' | 'bookmarks'
+import { useStore } from '@utils/useStore'
+import { sidepanelStore, type SidePanelSection } from './sidepanelStore'
 
 function hostname(url = ''): string {
   try {
@@ -15,29 +14,15 @@ function hostname(url = ''): string {
 }
 
 function SidePanel() {
-  const [section, setSection] = useState<Section>('tabs')
-  const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([])
-  const [history, setHistory] = useState<chrome.history.HistoryItem[]>([])
-  const [bookmarks, setBookmarks] = useState<chrome.bookmarks.BookmarkTreeNode[]>([])
+  const section = useStore(sidepanelStore, (state) => state.section)
+  const tabs = useStore(sidepanelStore, (state) => state.tabs)
+  const history = useStore(sidepanelStore, (state) => state.history)
+  const bookmarks = useStore(sidepanelStore, (state) => state.bookmarks)
+  const { load, setSection, openUrl, activateTab } = sidepanelStore.getState()
 
   useEffect(() => {
-    chrome.tabs?.query({}).then(setTabs)
-    chrome.history?.search({ text: '', maxResults: 15 }, setHistory)
-    chrome.bookmarks?.getTree((tree) => {
-      const flat: chrome.bookmarks.BookmarkTreeNode[] = []
-      const walk = (nodes: chrome.bookmarks.BookmarkTreeNode[]) => {
-        for (const node of nodes) {
-          if (node.url) flat.push(node)
-          if (node.children) walk(node.children)
-        }
-      }
-      walk(tree)
-      setBookmarks(flat.slice(0, 15))
-    })
-  }, [])
-
-  const openUrl = (url?: string) => url && TabUtils.createTab(url)
-  const activateTab = (id?: number) => id != null && chrome.tabs.update(id, { active: true })
+    load()
+  }, [load])
 
   const list = html`
     <div class="item-list">
@@ -94,7 +79,7 @@ function SidePanel() {
       </header>
 
       <nav class="nav">
-        ${(['tabs', 'history', 'bookmarks'] as Section[]).map(
+        ${(['tabs', 'history', 'bookmarks'] as SidePanelSection[]).map(
           (s) => html`
             <button class="nav-btn ${section === s ? 'active' : ''}" onClick=${() => setSection(s)}>
               ${s[0].toUpperCase() + s.slice(1)}

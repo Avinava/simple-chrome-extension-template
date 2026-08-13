@@ -10,7 +10,7 @@
 
 import { createStore } from 'zustand/vanilla'
 import { subscribeWithSelector } from 'zustand/middleware'
-import { StorageService, TabUtils, RuntimeUtils } from '@core/services'
+import { StorageService, TabUtils, RuntimeUtils, SidePanelUtils } from '@core/services'
 
 const COUNT_KEY = 'count'
 
@@ -46,13 +46,6 @@ export const popupStore = createStore<PopupState>()(
       RuntimeUtils.openOptionsPage()
     },
 
-    openSidePanel: async () => {
-      try {
-        const win = await chrome.windows.getCurrent()
-        if (win.id != null) await chrome.sidePanel.open({ windowId: win.id })
-      } catch (error) {
-        console.error('Failed to open side panel:', error)
-      }
-    },
+    openSidePanel: () => SidePanelUtils.openCurrentWindow(),
   }))
 )

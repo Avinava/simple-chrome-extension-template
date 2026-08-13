@@ -8,14 +8,14 @@ starts with structure instead of a blank `switch` statement.
 ## ✨ What's in the box
 
 - **Preact + HTM** — a ~4KB React-like UI with no JSX build step
-- **TypeScript** — strict-ish config, transpiled natively by Vite (no extra loader)
+- **TypeScript** — strict config, transpiled natively by Vite (no extra loader)
 - **Vite + `@crxjs/vite-plugin`** — fast builds and HMR; the manifest drives the build
 - **Zustand** — vanilla stores that work in any surface, bridged to Preact with a tiny `useStore` hook
 - **Typed messaging** — a `MessageBus` + background router replace ad-hoc `chrome.runtime.onMessage` handlers
 - **Chrome API wrappers** — promisified, null-safe helpers (`StorageService`, `TabUtils`, …)
 - **Theming** — a design-token CSS system with light / dark / system, synced across every surface
 - **Lucide icons** — tree-shaken SVG icons rendered straight into HTM
-- **Tooling** — Prettier, Vitest (+ happy-dom), path aliases, and typecheck wired up
+- **Tooling** — ESLint, Prettier, Vitest (+ happy-dom), path aliases, and typecheck wired up
 
 ## 📁 Project structure
 
@@ -31,8 +31,8 @@ src/
     services/        # ThemeService (relays theme across surfaces)
   content/            # Content script
   popup/              # Toolbar popup   (popup.tsx + popupStore.ts)
-  options/            # Options page
-  sidepanel/          # Side panel (Chrome 114+)
+  options/            # Options page (options.tsx + optionsStore.ts)
+  sidepanel/          # Side panel (sidepanel.tsx + sidepanelStore.ts)
   shared/             # Cross-surface UI: theme.css, themeStore.ts, ThemeToggle.tsx
   utils/              # useStore (zustand→Preact), icons (lucide), preact-htm
 icons/                # Extension icons (16/32/48/128)
@@ -58,12 +58,16 @@ Then load the extension:
 | `npm run dev` | Dev server with hot reload |
 | `npm run build` | Production build to `dist/` (console/debugger stripped) |
 | `npm run build:watch` | Rebuild on change |
+| `npm run preview` | Preview the production build |
+| `npm run clean` | Remove `dist/` |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Run Vitest once |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run test:coverage` | Vitest with coverage |
 | `npm run format` | Prettier write |
 | `npm run format:check` | Prettier check |
+| `npm run format:all` | Format all supported files |
+| `npm run lint` | Lint TypeScript and Preact code |
 | `npm run zip` | Build and package `extension.zip` |
 
 ## 🧭 How it fits together

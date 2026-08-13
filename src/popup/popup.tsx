@@ -10,10 +10,11 @@ import { popupStore } from './popupStore'
 function Popup() {
   const state = useStore(popupStore)
   const actions = popupStore.getState()
+  const { load } = actions
 
   useEffect(() => {
-    actions.load()
-  }, [])
+    load()
+  }, [load])
 
   return html`
     <div class="popup card">

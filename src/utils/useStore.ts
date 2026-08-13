@@ -22,7 +22,7 @@ export function useStore<T, S = T>(
     const update = () => setSlice(selector(store.getState()))
     update() // sync any change that happened between render and effect
     return store.subscribe(update)
-  }, [])
+  }, [store, selector])
 
   return slice
 }

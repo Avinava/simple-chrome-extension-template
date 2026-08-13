@@ -1,0 +1,14 @@
+name: Bug report
+description: Report a reproducible problem in the template.
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true

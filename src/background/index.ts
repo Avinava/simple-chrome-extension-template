@@ -35,7 +35,8 @@ function registerLifecycle(): void {
     }
 
     if (chrome.contextMenus) {
-      chrome.contextMenus.create({
+      await chrome.contextMenus.removeAll()
+      await chrome.contextMenus.create({
         id: CONTEXT_MENU_ID,
         title: 'Template action',
         contexts: ['selection', 'page'],
@@ -56,7 +57,7 @@ function registerLifecycle(): void {
   })
 
   // Let clicking the toolbar icon open the side panel.
-  chrome.sidePanel?.setPanelBehavior({ openPanelOnActionClick: false }).catch(() => {})
+  chrome.sidePanel?.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {})
 }
 
 initialize()

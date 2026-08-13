@@ -13,11 +13,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@core': r('./src/core'),
-      '@background': r('./src/background'),
-      '@content': r('./src/content'),
-      '@popup': r('./src/popup'),
-      '@options': r('./src/options'),
-      '@sidepanel': r('./src/sidepanel'),
       '@shared': r('./src/shared'),
       '@utils': r('./src/utils'),
     },

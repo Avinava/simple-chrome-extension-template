@@ -1,43 +1,18 @@
 import { html, render } from '@utils/preact-htm'
-import { useState, useEffect } from 'preact/hooks'
-import { StorageService } from '@core/services'
+import { useEffect } from 'preact/hooks'
 import { ThemeToggle } from '@shared/ThemeToggle'
 import { initializeTheme } from '@shared/themeStore'
-
-interface Settings {
-  notifications: boolean
-  autoSave: boolean
-  customText: string
-}
-
-const DEFAULTS: Settings = { notifications: true, autoSave: true, customText: '' }
-const SETTINGS_KEY = 'settings'
+import { useStore } from '@utils/useStore'
+import { optionsStore } from './optionsStore'
 
 function Options() {
-  const [settings, setSettings] = useState<Settings>(DEFAULTS)
-  const [saved, setSaved] = useState(false)
+  const settings = useStore(optionsStore, (state) => state.settings)
+  const saved = useStore(optionsStore, (state) => state.saved)
+  const { load, update, save, reset } = optionsStore.getState()
 
   useEffect(() => {
-    StorageService.get<Settings>(SETTINGS_KEY, 'sync').then((stored) => {
-      if (stored) setSettings({ ...DEFAULTS, ...stored })
-    })
-  }, [])
-
-  const update = <K extends keyof Settings>(key: K, value: Settings[K]) => {
-    setSettings((prev) => ({ ...prev, [key]: value }))
-    setSaved(false)
-  }
-
-  const save = async () => {
-    await StorageService.set(SETTINGS_KEY, settings, 'sync')
-    setSaved(true)
-  }
-
-  const reset = async () => {
-    setSettings(DEFAULTS)
-    await StorageService.set(SETTINGS_KEY, DEFAULTS, 'sync')
-    setSaved(true)
-  }
+    load()
+  }, [load])
 
   return html`
     <div class="options">

@@ -12,9 +12,7 @@
     "notifications",
     "history",
     "bookmarks",
-    "alarms",
-    "sidePanel",
-    "notifications"
+    "sidePanel"
   ],
   "host_permissions": ["http://*/*", "https://*/*"],
   "action": {

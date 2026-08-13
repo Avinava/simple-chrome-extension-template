@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- CI, Dependabot, ESLint, EditorConfig, contributor/security guidance, and a
+  vendor-neutral `AGENTS.md` instruction source.
+- Stores for the options page and side panel, plus history, bookmark, and side
+  panel core service helpers.
+- Background message-router coverage, including notification failure handling.
+
+### Changed
+
+- Refreshed the Vite, CRX, TypeScript, UI, test, formatting, and type packages.
+- Made all surfaces follow the store-and-service architecture and made the
+  notifications setting take effect.
+- Removed obsolete build configuration, unused aliases and permissions, and the
+  dead environment-file example.
+- Made context-menu setup idempotent and enabled side-panel opening from the
+  toolbar action.
+
 ## [2.0.0] - 2026-07-14
 
 A ground-up upgrade from a minimal starter into an opinionated, typed template.
@@ -26,6 +46,9 @@ A ground-up upgrade from a minimal starter into an opinionated, typed template.
 - Surface styling now consumes shared design tokens instead of per-file hardcoded gradients.
 - The manifest `version` is now injected from `package.json` at build time (single source of truth).
 - Manifest permissions aligned with the APIs actually used (`tabs`, `notifications`, `history`, `bookmarks`).
+
+[Unreleased]: https://github.com/Avinava/simple-chrome-extension-template/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/Avinava/simple-chrome-extension-template/releases/tag/v2.0.0
 
 ## [1.0.0] - 2025-06-30
 

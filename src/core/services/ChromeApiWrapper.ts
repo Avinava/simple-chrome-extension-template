@@ -4,6 +4,8 @@
  * they need: `TabUtils`, `ScriptUtils`, `RuntimeUtils`, `NotificationUtils`.
  */
 
+import { StorageService } from './StorageService'
+
 /** Helpers for working with tabs. */
 export class TabUtils {
   /** The current active tab in the focused window, or `null`. */
@@ -66,6 +68,52 @@ export class TabUtils {
       console.error('TabUtils.focusTab error:', error)
     }
   }
+
+  /** All tabs visible to the extension. */
+  static async getAllTabs(): Promise<chrome.tabs.Tab[]> {
+    try {
+      if (typeof chrome === 'undefined' || !chrome.tabs) return []
+      return await chrome.tabs.query({})
+    } catch (error) {
+      console.error('TabUtils.getAllTabs error:', error)
+      return []
+    }
+  }
+}
+
+/** Helpers for browser history. */
+export class HistoryUtils {
+  static async search(maxResults = 15): Promise<chrome.history.HistoryItem[]> {
+    try {
+      if (typeof chrome === 'undefined' || !chrome.history) return []
+      return await chrome.history.search({ text: '', maxResults })
+    } catch (error) {
+      console.error('HistoryUtils.search error:', error)
+      return []
+    }
+  }
+}
+
+/** Helpers for browser bookmarks. */
+export class BookmarkUtils {
+  static async getBookmarks(limit = 15): Promise<chrome.bookmarks.BookmarkTreeNode[]> {
+    try {
+      if (typeof chrome === 'undefined' || !chrome.bookmarks) return []
+      const tree = await chrome.bookmarks.getTree()
+      const bookmarks: chrome.bookmarks.BookmarkTreeNode[] = []
+      const walk = (nodes: chrome.bookmarks.BookmarkTreeNode[]) => {
+        for (const node of nodes) {
+          if (node.url) bookmarks.push(node)
+          if (node.children) walk(node.children)
+        }
+      }
+      walk(tree)
+      return bookmarks.slice(0, limit)
+    } catch (error) {
+      console.error('BookmarkUtils.getBookmarks error:', error)
+      return []
+    }
+  }
 }
 
 /** Helpers for programmatic script injection. */
@@ -106,12 +154,31 @@ export class RuntimeUtils {
   }
 }
 
+/** Helpers for the side panel. */
+export class SidePanelUtils {
+  static async openCurrentWindow(): Promise<void> {
+    try {
+      if (typeof chrome === 'undefined' || !chrome.windows || !chrome.sidePanel) return
+      const window = await chrome.windows.getCurrent()
+      if (window.id != null) await chrome.sidePanel.open({ windowId: window.id })
+    } catch (error) {
+      console.error('SidePanelUtils.openCurrentWindow error:', error)
+    }
+  }
+}
+
 /** Helpers for browser notifications. */
 export class NotificationUtils {
-  static async show(title: string, message: string, iconPath = 'icons/icon48.png'): Promise<void> {
+  static async show(
+    title: string,
+    message: string,
+    iconPath = 'icons/icon48.png'
+  ): Promise<string | null> {
     try {
-      if (typeof chrome === 'undefined' || !chrome.notifications) return
-      await chrome.notifications.create({
+      if (typeof chrome === 'undefined' || !chrome.notifications) return null
+      const settings = await StorageService.get<{ notifications?: boolean }>('settings', 'sync')
+      if (settings?.notifications === false) return null
+      return await chrome.notifications.create({
         type: 'basic',
         iconUrl: RuntimeUtils.getExtensionUrl(iconPath),
         title,
@@ -119,6 +186,7 @@ export class NotificationUtils {
       })
     } catch (error) {
       console.error('NotificationUtils.show error:', error)
+      return null
     }
   }
 }

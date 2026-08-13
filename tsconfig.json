@@ -11,30 +11,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "allowJs": true,
-    "checkJs": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "declaration": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noImplicitAny": false,
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
-      "@core/*": ["src/core/*"],
-      "@background/*": ["src/background/*"],
-      "@content/*": ["src/content/*"],
-      "@popup/*": ["src/popup/*"],
-      "@options/*": ["src/options/*"],
-      "@sidepanel/*": ["src/sidepanel/*"],
-      "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"]
+      "@core/*": ["./src/core/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@utils/*": ["./src/utils/*"]
     },
     "types": ["chrome"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
