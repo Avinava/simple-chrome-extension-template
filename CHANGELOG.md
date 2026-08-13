@@ -42,7 +42,7 @@ A ground-up upgrade from a minimal starter into an opinionated, typed template.
 - **Theming system**: a design-token stylesheet (`shared/theme.css`), a `themeStore` (light/dark/system, persisted and synced across surfaces), a `ThemeService` relay, and a `ThemeToggle` component.
 - **Lucide icons** rendered into HTM via a small `icon()` helper.
 - **Tooling**: Prettier config, Vitest + happy-dom with example tests, path aliases (`@core`, `@shared`, …), and a production console/debugger strip.
-- **Docs**: `ARCHITECTURE.md` and AI/contributor guides (`.github/copilot-instructions.md`, `CLAUDE.md`).
+- **Docs**: architecture and AI/contributor guides (`.github/copilot-instructions.md`, `CLAUDE.md`).
 
 ### Changed
 

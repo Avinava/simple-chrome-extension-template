@@ -61,7 +61,7 @@ popup / options / side panel     content script
 `src/core` is generic infrastructure. The background worker coordinates
 privileged work and cross-context communication. Each UI surface owns a vanilla
 Zustand store; components render state and invoke store actions. See
-[ARCHITECTURE.md](ARCHITECTURE.md) for the full dependency rules.
+[the architecture guide](docs/architecture.md) for the full dependency rules.
 
 ## Project map
 
@@ -127,7 +127,7 @@ npm run typecheck && npm test && npm run format:check && npm run lint && npm run
 
 ## Documentation
 
-- [Architecture](ARCHITECTURE.md)
+- [Architecture](docs/architecture.md)
 - [Design system](docs/design-system.md)
 - [Extension development](docs/extension-development.md)
 - [Contribution guide](CONTRIBUTING.md)

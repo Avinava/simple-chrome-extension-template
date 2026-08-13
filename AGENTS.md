@@ -1,8 +1,8 @@
 # Working in this repository
 
 This file is the source of truth for contributors and coding agents. Read
-[ARCHITECTURE.md](ARCHITECTURE.md) and the relevant guide in `docs/` before
-changing a feature.
+[the architecture guide](docs/architecture.md) and the relevant guide in
+`docs/` before changing a feature.
 
 ## Non-negotiable boundaries
 
