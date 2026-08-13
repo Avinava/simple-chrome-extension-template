@@ -6,15 +6,32 @@ feature cleanly, not adopting a framework inside a framework.
 
 ## Dependency map
 
-```text
-popup / options / side panel ──> surface store ──> core services
-content script ────────────────────────────────> core services
-                                                   │
-                                                   v
-                                      background service worker
-                                                   │
-                                                   v
-                                   Chrome APIs and typed message contract
+```mermaid
+flowchart TB
+  subgraph Surfaces[Extension surfaces]
+    Popup[Popup]
+    Options[Options]
+    SidePanel[Side panel]
+  end
+  Store[Surface Zustand store]
+  Content[Content script]
+  MessageBus[Typed MessageBus]
+  Background[Background service worker]
+  Services[Core services]
+  Contract[Message contract]
+  APIs[Chrome APIs]
+
+  Popup --> Store
+  Options --> Store
+  SidePanel --> Store
+  Store --> Services
+  Store --> MessageBus
+  Content --> Services
+  Content --> MessageBus
+  MessageBus <--> Background
+  Background --> Services
+  Background --> Contract
+  Services --> APIs
 ```
 
 `src/core` only depends on Chrome APIs and TypeScript. UI surfaces and the

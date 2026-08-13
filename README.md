@@ -48,14 +48,30 @@ and select `dist/`.
 
 ## Architecture at a glance
 
-```text
-popup / options / side panel     content script
-             │                       │
-             └──── stores + MessageBus ────┐
-                                            │
-                                 background service worker
-                                            │
-                           core services and typed contracts
+```mermaid
+flowchart TB
+  subgraph UI[Extension surfaces]
+    Popup[Popup]
+    Options[Options]
+    Panel[Side panel]
+  end
+  Store[Vanilla Zustand stores]
+  Content[Content script]
+  Bus[Typed MessageBus]
+  Background[Background service worker]
+  Core[Core services and message contract]
+  Chrome[Chrome extension APIs]
+
+  Popup --> Store
+  Options --> Store
+  Panel --> Store
+  Store --> Core
+  Store --> Bus
+  Content --> Core
+  Content --> Bus
+  Bus <--> Background
+  Background --> Core
+  Core --> Chrome
 ```
 
 `src/core` is generic infrastructure. The background worker coordinates
