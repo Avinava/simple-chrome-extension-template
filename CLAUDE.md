@@ -1,4 +1,6 @@
-# CLAUDE.md
+# Claude Code instructions
 
-Project guidance is maintained in [AGENTS.md](AGENTS.md). Follow it together
-with [ARCHITECTURE.md](ARCHITECTURE.md).
+Follow [AGENTS.md](AGENTS.md). It is the single source of truth for repository
+rules, architecture boundaries, and verification. Consult
+[ARCHITECTURE.md](ARCHITECTURE.md) for design context and
+[docs/design-system.md](docs/design-system.md) for visual changes.

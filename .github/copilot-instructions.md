@@ -1,4 +1,6 @@
-# Copilot / AI development guide
+# Copilot instructions
 
-All repository instructions are maintained in [AGENTS.md](../AGENTS.md). Read
-it together with [ARCHITECTURE.md](../ARCHITECTURE.md).
+Follow [AGENTS.md](../AGENTS.md) as the source of truth for implementation,
+testing, and permission rules. Read [ARCHITECTURE.md](../ARCHITECTURE.md) before
+changing cross-context behavior and [the design-system guide](../docs/design-system.md)
+before changing UI.

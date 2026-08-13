@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   toolbar action.
 - Documented the content-script demo's broad host access as development-only
   scope that must be narrowed or removed before publishing.
+- Rewrote repository documentation and contributor instructions, and added the
+  design-system and extension-development guides.
 
 ## [2.0.0] - 2026-07-14
 

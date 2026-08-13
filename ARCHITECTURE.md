@@ -1,92 +1,87 @@
 # Architecture
 
-This template is organized into layers so that generic infrastructure stays
-separate from surface-specific UI. The goal: you can grow the extension by
-adding features, not by editing one giant file.
+The template separates reusable extension infrastructure from feature-specific
+surfaces. It is deliberately small: the intended extension point is adding a
+feature cleanly, not adopting a framework inside a framework.
 
-## Layers
+## Dependency map
 
+```text
+popup / options / side panel ──> surface store ──> core services
+content script ────────────────────────────────> core services
+                                                   │
+                                                   v
+                                      background service worker
+                                                   │
+                                                   v
+                                   Chrome APIs and typed message contract
 ```
-core        →  generic infrastructure; depends only on Chrome APIs
-background  →  privileged orchestration (service worker)
-surfaces    →  popup / options / sidepanel — each a self-contained mini-app
-content     →  scripts injected into web pages
-shared      →  cross-surface UI (theme system)
-utils       →  small framework glue (useStore, icons, preact-htm)
-```
 
-**Dependency direction:** surfaces and `content` depend on `core`, `shared`, and
-`utils`. `core` depends on nothing but the Chrome APIs. Nothing depends on a
-surface. Keep it that way.
+`src/core` only depends on Chrome APIs and TypeScript. UI surfaces and the
+content script may depend on `core`, `shared`, and `utils`. Nothing outside a
+surface depends on that surface.
 
-## Core (`src/core`)
+## Repository map
 
-The reusable heart of the template.
+| Area | Responsibility |
+| --- | --- |
+| `src/core/` | Generic Chrome wrappers, storage, messaging, shared types, and pure utilities |
+| `src/background/` | Service-worker startup, lifecycle work, command handlers, and message routing |
+| `src/popup/`, `src/options/`, `src/sidepanel/` | Independent Preact surfaces and their Zustand stores |
+| `src/content/` | Web-page integration example |
+| `src/shared/` | Design tokens, theme state, and reusable UI such as the theme toggle |
+| `src/utils/` | Preact/HTM, Zustand, and icon adapters |
 
-- **`services/MessageBus`** — typed `send` / `sendToTab` / `onMessage` /
-  `broadcast`. Wraps `chrome.runtime` / `chrome.tabs` messaging in promises that
-  always resolve with a `CommonResponse` (never throw) and guards a missing
-  `chrome` runtime so it is unit-testable.
-- **`services/StorageService`** — promisified, typed access to `chrome.storage`
-  across `local` / `session` / `sync`, with safe fallbacks.
-- **`services/ChromeApiWrapper`** — `TabUtils`, `HistoryUtils`, `BookmarkUtils`,
-  `ScriptUtils`, `RuntimeUtils`, `SidePanelUtils`, `NotificationUtils`, `sleep`.
-- **`types/messages`** — the message contract. Every message is discriminated by
-  a literal `action` and unioned into `ExtensionMessage`. This is the single
-  source of truth both the router and `MessageBus` are typed against.
-- **`utils`** — small pure helpers (`generateId`).
+## Core services
 
-Import from the barrel: `import { MessageBus, StorageService } from '@core/services'`.
+Import services through `@core/services`.
+
+- `MessageBus` wraps extension messaging in typed promise-based calls that
+  return `CommonResponse` values instead of throwing expected runtime errors.
+- `StorageService` provides typed access to `chrome.storage` areas with safe
+  fallback behavior for tests and unavailable APIs.
+- `ChromeApiWrapper` groups focused helpers: tabs, history, bookmarks, script
+  injection, runtime URLs, side-panel opening, and notifications.
+
+Add a helper when it can be reused across contexts. Keep business decisions in
+the caller or a feature-specific store.
 
 ## Messaging
 
-One contract, one router.
+Messages are discriminated by `action` in `src/core/types/messages.ts`.
 
-1. A surface (or its store) calls `MessageBus.send({ action: '...' })`.
-2. The background's `createMessageRouter` (in `background/handlers/MessageHandlers.ts`)
-   dispatches by `action` to a small async handler that returns
-   `{ handled, response }` and replies via `sendResponse`.
-3. To add a message: declare its interface in `core/types/messages.ts`, add it to
-   the `ExtensionMessage` union, and add a `case` to the router. Types flow
-   everywhere automatically.
+1. A store or content script calls `MessageBus.send()` or `sendToTab()`.
+2. `createMessageRouter()` in the background worker dispatches the action.
+3. The handler returns one `CommonResponse`; asynchronous handlers keep the
+   response channel open.
 
-Keyboard shortcuts follow the same shape in `handlers/CommandHandlers.ts`,
-dispatching `chrome.commands` by name.
+To add an action, define its interface, include it in `ExtensionMessage`, and
+add a router case. Test the new handler next to `MessageHandlers.ts`.
 
-## State (Zustand)
+## State and UI
 
-Each surface owns a **vanilla Zustand store** (`createStore` +
-`subscribeWithSelector`) — see `popup/popupStore.ts` for the reference. Rules:
+Each Preact surface has a vanilla Zustand store. Stores own async behavior,
+persistence, and Chrome API calls; components select state with `useStore()`
+and render it. The popup, options page, and side panel demonstrate the pattern.
 
-- **All logic lives in store actions**, including async `chrome.*` calls (through
-  the core services). Components stay presentational.
-- Components read state with the `useStore(store, selector)` hook
-  (`utils/useStore.ts`), which subscribes on mount and cleans up on unmount.
-- Actions from `store.getState()` are stable — call them directly from handlers.
+HTM templates are rendered through `@utils/preact-htm`; Lucide icons are
+rendered through `@utils/icons`. Prefer shared primitives and tokens over a new
+UI dependency.
 
-## Theming
+## Theme system
 
-`shared/theme.css` is the design system: CSS custom properties for color,
-spacing, radius, typography, shadows, and z-index. Every surface `@import`s it and
-styles itself with `var(--token)` — never hardcoded values.
+`src/shared/theme.css` supplies semantic color, type, spacing, radius, shadow,
+motion, and layer tokens. `themeStore` persists `light`, `dark`, or `system` in
+sync storage, applies the selected root class, and asks the background worker
+to relay changes to other open surfaces.
 
-`shared/themeStore.ts` manages `light | dark | system`, persists to
-`chrome.storage.sync`, toggles the `.dark-mode` / `.light-mode` class on `<html>`,
-and broadcasts changes. The background's `ThemeService` relays a change to every
-other open surface, whose `setupThemeListener` applies it — so one toggle updates
-every window. `ThemeToggle.tsx` is a drop-in control.
+See [docs/design-system.md](docs/design-system.md) for token and extension
+guidance.
 
-## UI (Preact + HTM)
+## Adding a surface
 
-No JSX build step: components return `html\`...\`` tagged templates and are
-mounted with `render(html\`<${App} />\`, root)`. Icons come from `lucide` as
-tree-shaken named imports, rendered to VNodes by `utils/icons.ts`.
-
-## Conventions
-
-- **Never call `chrome.*` from a component** — go through a store + core service.
-- **Add a message, not a special case** — extend the contract and the router.
-- **Style with tokens** — extend `theme.css` rather than hardcoding values.
-- **Keep `core` generic** — no product-specific logic belongs there.
-- **Path aliases** (`@core`, `@shared`, `@utils`) are defined in three places
-  that must stay in sync: `tsconfig.json`, `vite.config.js`, `vitest.config.ts`.
+1. Add the HTML entry and Preact entry under `src/`.
+2. Add its manifest entry; CRX discovers the build input there.
+3. Create a local Zustand store for its behavior.
+4. Import the shared theme and initialize it at the entry point.
+5. Add tests and run the full verification checklist in [AGENTS.md](AGENTS.md).

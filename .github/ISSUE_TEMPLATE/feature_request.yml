@@ -1,5 +1,6 @@
 name: Feature request
-description: Suggest an improvement to the template.
+description: Suggest an improvement that benefits template users.
+title: "[Feature]: "
 labels: [enhancement]
 body:
   - type: textarea
@@ -14,3 +15,7 @@ body:
       description: Describe the smallest useful improvement.
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Alternatives considered
+      description: Include workarounds or other approaches when known.

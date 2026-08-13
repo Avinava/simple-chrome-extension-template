@@ -1,14 +1,32 @@
 name: Bug report
 description: Report a reproducible problem in the template.
+title: "[Bug]: "
 labels: [bug]
 body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the starter. Please remove secrets and personal data.
   - type: textarea
     attributes:
       label: What happened?
+      description: Describe the observed behavior and its impact.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+        3. …
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Environment
+      description: Include OS, Chrome version, and Node version when relevant.
