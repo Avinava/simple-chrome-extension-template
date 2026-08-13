@@ -1,7 +1,7 @@
 {
   "name": "simple-chrome-extension-template",
-  "version": "1.0.0",
-  "description": "A simple Chrome extension template using Preact, HTM, and Vite",
+  "version": "2.0.0",
+  "description": "An opinionated Chrome extension template using Preact, HTM, Zustand, TypeScript, and Vite",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -9,15 +9,29 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "zip": "npm run build && cd dist && zip -r ../extension.zip .",
-    "test": "echo 'No tests specified yet'"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{js,ts,tsx,css,html}\"",
+    "format:check": "prettier --check \"src/**/*.{js,ts,tsx,css,html}\"",
+    "format:all": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.23",
-    "vite": "^5.1.6"
+    "@types/chrome": "^0.1.33",
+    "@vitest/coverage-v8": "^4.1.6",
+    "happy-dom": "^20.9.0",
+    "prettier": "^3.6.1",
+    "typescript": "^5.9.3",
+    "vite": "^5.1.6",
+    "vitest": "^4.1.6"
   },
   "dependencies": {
     "htm": "^3.1.1",
-    "preact": "^10.19.6"
+    "lucide": "^0.408.0",
+    "preact": "^10.19.6",
+    "zustand": "^5.0.6"
   },
   "type": "module"
 }

@@ -1,21 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Simple Chrome Extension Template",
-  "version": "1.0.0",
-  "description": "A simple Chrome extension template using Preact, HTM, and Vite",
+  "version": "2.0.0",
+  "description": "An opinionated Chrome extension template using Preact, HTM, Zustand, TypeScript, and Vite",
   "permissions": [
     "storage",
     "activeTab",
+    "tabs",
     "scripting",
     "contextMenus",
+    "notifications",
+    "history",
+    "bookmarks",
     "alarms",
     "sidePanel",
     "notifications"
   ],
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "action": {
     "default_popup": "src/popup/popup.html",
     "default_title": "Simple Extension",
@@ -26,18 +27,33 @@
       "128": "icons/icon128.png"
     }
   },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "options_page": "src/options/options.html",
   "side_panel": {
     "default_path": "src/sidepanel/sidepanel.html"
   },
   "background": {
-    "service_worker": "src/background/background.js",
+    "service_worker": "src/background/index.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content/content.js"]
+      "js": ["src/content/content.ts"]
     }
-  ]
+  ],
+  "commands": {
+    "show-notification": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Show a notification for the active tab"
+    }
+  }
 }
