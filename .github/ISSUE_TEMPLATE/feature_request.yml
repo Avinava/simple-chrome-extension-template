@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an improvement to the template.
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes:
+      label: Problem to solve
+      description: What developer need or limitation does this address?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed change
+      description: Describe the smallest useful improvement.
+    validations:
+      required: true

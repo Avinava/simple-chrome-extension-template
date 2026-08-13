@@ -101,6 +101,11 @@ Strip out what you don't need — the infrastructure underneath is the point.
   surface follows them.
 - **Messages:** add a message to `src/core/types/messages.ts` and a case to the
   background router.
+- **Permissions:** the included content-script demo runs on web pages so it can
+  show the floating button and receive context-menu messages. Before publishing,
+  narrow `content_scripts[].matches` and `host_permissions` in
+  `src/manifest.json` to the sites your extension actually needs, or remove the
+  demo entirely. Do not ship `<all_urls>` as a default for a product extension.
 
 ## 📄 License
 

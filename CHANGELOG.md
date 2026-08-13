@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dead environment-file example.
 - Made context-menu setup idempotent and enabled side-panel opening from the
   toolbar action.
+- Documented the content-script demo's broad host access as development-only
+  scope that must be narrowed or removed before publishing.
 
 ## [2.0.0] - 2026-07-14
 

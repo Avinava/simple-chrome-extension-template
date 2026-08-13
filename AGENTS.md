@@ -15,6 +15,8 @@ Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code.
 5. A new extension surface needs a manifest entry. CRX derives its build entry
    from that manifest—do not add Rollup inputs manually.
 6. Colocate unit tests with source files as `*.test.ts`.
+7. Treat manifest permissions as product scope: remove demo permissions and
+   narrow host matches before a published extension requests access.
 
 ## Verification
 
