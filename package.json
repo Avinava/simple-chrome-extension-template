@@ -28,7 +28,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.8.1",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "happy-dom": "^20.11.2",
+    "happy-dom": "^20.11.6",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
